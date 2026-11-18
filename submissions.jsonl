@@ -1,0 +1,13 @@
+{"time": "2026-11-18 10:18:04", "id": "2023-2", "verdict": "CE", "passed": 0, "total": 8, "codeLen": 3390}
+{"time": "2026-11-18 10:18:48", "id": "2023-2", "verdict": "CE", "passed": 0, "total": 8, "codeLen": 3420}
+{"time": "2026-11-18 10:46:45", "id": "2023-3", "verdict": "WA", "passed": 7, "total": 10, "codeLen": 2374}
+{"time": "2026-11-18 12:02:07", "id": "2023-4", "verdict": "WA", "passed": 7, "total": 9, "codeLen": 1259}
+{"time": "2026-11-18 12:06:12", "id": "2023-4", "verdict": "WA", "passed": 8, "total": 9, "codeLen": 1259}
+{"time": "2026-11-18 12:07:25", "id": "2023-4", "verdict": "AC", "passed": 9, "total": 9, "codeLen": 1259}
+{"time": "2026-11-18 12:29:18", "id": "2024-1", "verdict": "TLE", "passed": 8, "total": 9, "codeLen": 1213}
+{"time": "2026-11-18 12:31:30", "id": "2024-1", "verdict": "AC", "passed": 9, "total": 9, "codeLen": 1281}
+{"time": "2026-11-18 17:03:00", "id": "2024-3", "verdict": "WA", "passed": 6, "total": 9, "codeLen": 1283}
+{"time": "2026-11-18 17:04:35", "id": "2024-3", "verdict": "AC", "passed": 9, "total": 9, "codeLen": 1285}
+{"time": "2026-11-18 18:36:05", "id": "2025-2", "verdict": "CE", "passed": 0, "total": 8, "codeLen": 1654}
+{"time": "2026-11-18 18:36:42", "id": "2025-2", "verdict": "WA", "passed": 6, "total": 8, "codeLen": 1656}
+{"time": "2026-11-18 18:37:43", "id": "2025-2", "verdict": "AC", "passed": 8, "total": 8, "codeLen": 1656}

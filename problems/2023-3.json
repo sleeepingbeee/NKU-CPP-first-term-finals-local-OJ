@@ -1,0 +1,46 @@
+{
+  "id": "2023-3",
+  "year": 2023,
+  "no": "第3题（A卷）",
+  "title": "函数（重载 + 进制转换）",
+  "difficulty": "普及",
+  "tags": [
+    "函数重载",
+    "进制转换",
+    "字符串补零",
+    "输入校验"
+  ],
+  "source": "2023 上机考试真题 · 第3题 A卷 · OJ #555（B 卷 #556）",
+  "timeLimitMs": 2000,
+  "checker": "default",
+  "statement": "### 题目描述\n\n勇士林克在哈特诺村服饰染色点店老板瑟吉处得知，付款 20 卢比的同时还得寻找各种颜色的材料才能进行染色，林克决定自行研究新的佐纳乌科技进行服饰染色。\n\n已知佐纳乌装置需要一个十六进制的颜色代码进行染色，如 `\"#00ffff\"` 表示青色。但不同场景中表示颜色的方式有很多种，如 RGB 色彩模式、CMYK 印刷四色模式。请帮助林克写一个**重载函数 `Color2Hex()`** 来完成不同形式颜色数据向十六进制颜色代码的转换。\n\n**RGB 色彩模式**：常用的颜色模式，有三个整数类型颜色分量 R（Red 红色）、G（Green 绿色）、B（Blue 蓝色），每个分量为 0 到 255 的整数，如 `(0,255,255)` 就表示青色；每个分量转换成十六进制数拼接起来，`(0,255,255)` 对应的十六进制颜色代码就为 `\"#00ffff\"`。\n\n**CMYK 四色模式**：三原混色加上黑色的印刷套色模式，有四个分量 C（Cyan 青色）、M（Magenta 品红色）、Y（Yellow 黄色）、K（black 表示灰度），每个分量为 0 到 1 之间的浮点数，如 `(1.0000, 0.0000, 0.0000, 0.0000)` 表示青色。CMYK 转换 RGB 的计算公式如下：\n\n```\nR = (int)255.0*(1-C)*(1-K);\nG = (int)255.0*(1-M)*(1-K);\nB = (int)255.0*(1-Y)*(1-K);\n```\n\n请完成下面的函数功能：\n\n```cpp\nvoid Color2Hex(int r, int g, int b);              // 实现 RGB 数据向十六进制颜色代码转换，并输出颜色代码\nvoid Color2Hex(float c, float m, float y, float k); // 实现 CMYK 数据向十六进制颜色代码转换，并输出颜色代码\n```\n\n### 输入格式\n\n程序接受两行输入：第一行为一个字符，`r`（或 `R`）表示第二行为 RGB 数据，`c`（或 `C`）表示第二行为 CMYK 数据；第二行为与第一行对应的输入数据。\n\n- 第一行为 `r` / `R` 时，第二行为 3 个整数（RGB）。\n- 第一行为 `c` / `C` 时，第二行为 4 个浮点数（CMYK）。\n\n### 输出格式\n\n针对输入数据进行转换后的十六进制颜色代码，格式为 `\"#xxxxxx\"`，`x` 为对应的十六进制符号（`0~f`，**小写**）。如果输入的字符错误或者输入的数据不规范，输出 `Wrong Input!`。\n\n- 每个分量必须**补齐两位**：例如 `(0,255,255)` 输出 `#00ffff`，不能输出成 `#0fffff`。\n- 十六进制字母必须小写。\n\n### 数据范围\n\n- RGB 分量：0~255 的整数；CMYK 分量：0~1 的浮点数（本题保证输入的是数字）。\n- 原题未标注更多范围；本题数据只包含上述两种模式和正常数值，以及少量越界数据、错误的模式字符。\n\n### 输入样例\n\n```\nC\n1.0 0.0 0.0 0.0\n```\n\n### 输出样例\n\n```\n#00ffff\n```\n\n### 提示\n\n- **必须写出「同名不同参数」的两个重载函数 `Color2Hex`**，本题按函数重载考点判分；只写一个函数或函数名不同，即使输出正确也会被判定为不满足硬性要求。\n- 进制转换必须**手写**（按位拆分 + 取余/整除，或按权展开），禁止用 `%x` / `%X` 等十六进制格式符、`itoa`、`stringstream`、`bitset`、`std::hex` 等库函数走捷径。\n- 数据规范性校验：模式字符不是 `r/R/c/C`、RGB 分量越界（`<0` 或 `>255`）、CMYK 分量越界（`<0` 或 `>1`），都要输出 `Wrong Input!`（注意大写 `I` 和感叹号）。\n- CMYK 转 RGB 时用 `(int)` **截断**（不是四舍五入），分量顺序 C/M/Y/K 依次对应 R/G/B 的公式见题目描述。\n- 本题按 **A 卷**实现：第二个重载是 `void Color2Hex(float c, float m, float y, float k)`，输入模式字符为 `r/R`（RGB）或 `c/C`（CMYK）。B 卷的第二个重载是 `void Color2Hex(long num)`（把 24 位颜色码当作十进制整数，如 `65535` 表示 `#00ffff`），输入模式字符为 `r/R`（RGB）或 `d/D`（十进制数）。\n",
+  "samples": [
+    {
+      "input": "C\n1.0 0.0 0.0 0.0\n",
+      "output": "#00ffff\n"
+    }
+  ],
+  "checks": [
+    {
+      "name": "必须实现 RGB 版重载函数 Color2Hex(int, int, int)",
+      "kind": "require",
+      "pattern": "void\\s+Color2Hex\\s*\\(\\s*int\\s*\\w*\\s*,\\s*int\\s*\\w*\\s*,\\s*int\\s*\\w*\\s*\\)",
+      "hint": "题目硬性要求：必须写出 void Color2Hex(int r, int g, int b)，否则计 0 分。",
+      "fatal": true
+    },
+    {
+      "name": "必须实现 CMYK 版重载函数 Color2Hex(float, float, float, float)",
+      "kind": "require",
+      "pattern": "void\\s+Color2Hex\\s*\\(\\s*float\\s*\\w*\\s*,\\s*float\\s*\\w*\\s*,\\s*float\\s*\\w*\\s*,\\s*float\\s*\\w*\\s*\\)",
+      "hint": "题目硬性要求：A 卷必须写出 void Color2Hex(float c, float m, float y, float k)，否则计 0 分。",
+      "fatal": true
+    },
+    {
+      "name": "禁止使用十六进制格式符或库函数走捷径",
+      "kind": "forbid",
+      "pattern": "%[-+ 0-9.#]*[xX]|\\b(itoa|sprintf|stringstream|bitset|strtol|stoi)\\b|std::hex",
+      "hint": "进制转换必须手写：禁止 %x/%X、itoa、stringstream、bitset、std::hex 等。",
+      "fatal": true
+    }
+  ]
+}

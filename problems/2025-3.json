@@ -1,0 +1,22 @@
+{
+  "id": "2025-3",
+  "year": 2025,
+  "no": "第3题（A卷）",
+  "title": "内存分配",
+  "difficulty": "普及-",
+  "tags": [
+    "数组模拟",
+    "first-fit",
+    "字符串输出"
+  ],
+  "source": "2025 期末上机真题 · 第三题 A卷 · NKU-OJ #1087",
+  "timeLimitMs": 2000,
+  "checker": "default",
+  "statement": "### 题目描述\n\n模拟一个简单的内存分配系统，使用一维数组表示内存块。你需要实现以下功能：\n\n1. 初始化内存：给定一个整数 size，创建一个大小为 size 的数组，初始时所有内存块均为空闲（用 0 表示空闲）。\n2. 分配内存：给定一个整数 `request_size`，找到**第一个**足够大的连续空闲内存块（用 1 表示已分配），并返回分配的起始索引；如果无法分配，输出分配失败的信息。\n3. 释放内存：给定一个起始索引 `start` 和长度 `length`，将对应的内存块标记为空闲（置 0）。\n\n### 输入格式\n\n第一行：一个整数 `size`（`1 <= size <= 1000`），表示内存大小。\n\n第二行：一个整数 `n`（`1 <= n <= 10`），表示接下来有 n 条操作。\n\n接下来 n 行，每行一条操作，格式为下面两种之一：\n\n- `ALLOCATE request_size` —— 分配内存（`1 <= request_size <= 1000`）\n- `FREE start length` —— 释放内存（`0 <= start`，`1 <= length <= 1000`）\n\n### 输出格式\n\n每条操作输出一行，共 n 行。\n\n对于 `ALLOCATE` 操作：\n\n- 成功时输出 `Allocated at index X`（X 是起始索引，从 0 开始）；\n- 失败时输出 `Allocation failed`。\n\n对于 `FREE` 操作：\n\n- 成功时输出 `Freed X blocks from index Y`（X 是长度，Y 是起始索引，从 0 开始）；\n- 失败时输出 `Invalid free operation`（越界，或要释放的区间内存在未分配的内存块）。\n\n### 数据范围\n\n`1 <= size <= 1000`，`1 <= n <= 10`。释放区间 `[start, start + length)` 必须完全落在 `[0, size)` 内，且区间内每个内存块都必须是已分配状态，否则视为无效释放。\n\n### 输入样例\n\n```\n10\n4\nALLOCATE 3\nALLOCATE 5\nFREE 0 3\nALLOCATE 4\n```\n\n### 输出样例\n\n```\nAllocated at index 0\nAllocated at index 3\nFreed 3 blocks from index 0\nAllocation failed\n```\n\n### 样例说明\n\n前两次分配把 `[0,3)` 和 `[3,8)` 标记为已分配；`FREE 0 3` 释放 `[0,3)` 后，空闲区间为 `[0,3)` 和 `[8,10)`，最长连续空闲只有 3 块，所以最后 `ALLOCATE 4` 分配失败。\n\n### 提示\n\n- 分配采用「首次适配（first-fit）」：从下标 0 开始向右扫描，找第一个长度足够的连续空闲块。\n- A 卷的输出动词是 `Allocated` / `Freed`；B 卷（#1088）是 `Allocate` / `Free`，其余字符串（`Allocation failed`、`Invalid free operation`）完全相同。\n- `blocks` 在输出中始终是复数形式（即使长度是 1 也输出 `Freed 1 blocks ...`）。\n",
+  "samples": [
+    {
+      "input": "10\n4\nALLOCATE 3\nALLOCATE 5\nFREE 0 3\nALLOCATE 4\n",
+      "output": "Allocated at index 0\r\nAllocated at index 3\r\nFreed 3 blocks from index 0\r\nAllocation failed\r\n"
+    }
+  ]
+}

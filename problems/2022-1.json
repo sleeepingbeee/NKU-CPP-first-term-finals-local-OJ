@@ -1,0 +1,31 @@
+{
+  "id": "2022-1",
+  "year": 2022,
+  "no": "第1题（B卷）",
+  "title": "提取字母字符串",
+  "difficulty": "入门",
+  "tags": [
+    "字符串",
+    "模拟",
+    "字符处理"
+  ],
+  "source": "2022 年 C++ 上册上机考试 · B卷 第1题 · OJ #264",
+  "timeLimitMs": 2000,
+  "checker": "default",
+  "statement": "### 题目描述\n\n输入一个长度为 n（0 < n <= 50）的字符串。如果把其中的**非字母字符**都看成空格，那么这个字符串将被分割成若干由字母组成的子串。请将每个子串中的字母**全部转换为小写**后输出这些子串，子串之间用**一个空格**分隔，**行尾无空格**。\n\n例如字符串 `My@#Name#is123user` 中的非字母字符 `@#`、`123` 都看成空格，于是得到 `My`、`Name`、`is`、`user` 四段，全部转小写后输出 `my name is user`。\n\n### 输入格式\n\n一行，一个长度为 n 的字符串（0 < n <= 50，字符串中**不含空格和换行符**）。\n\n### 输出格式\n\n按题目要求提取出的若干小写字母串，串与串之间用一个空格分隔，行尾无空格。\n\n### 数据范围\n\n0 < n <= 50。字符串中不含空格和换行符，可能包含大写字母、小写字母、数字以及其它可见 ASCII 字符。\n\n### 输入样例\n\n```\nMy@#Name#is123user\n```\n\n### 输出样例\n\n```\nmy name is user\n```\n\n### 提示\n\n- 连续多个非字母字符只能产生**一个**分隔空格；开头、结尾的非字母字符不能产生多余空格。\n- 若整个字符串中没有任何字母，则什么字母串也提取不到，此时输出空行（不要输出空格）。\n- 本题**不允许使用 STL**（不能用 `string`、`vector`、`sort` 等），请用 `char` 数组加手写循环完成。\n- 这是 B 卷第一题（原题 #264）。",
+  "samples": [
+    {
+      "input": "My@#Name#is123user\n",
+      "output": "my name is user\n"
+    }
+  ],
+  "checks": [
+    {
+      "name": "不允许使用 STL（string / vector / sort 等）",
+      "kind": "forbid",
+      "pattern": "#include\\s*<(algorithm|vector|string|map|set|list|deque)>|\\bsort\\s*\\(|\\bvector\\s*<|\\bstd\\s*::\\s*(sort|vector|string)\\b",
+      "hint": "题面明确要求手写字符数组处理，不能使用 STL 容器与算法；本项仅提示，不判 0 分。",
+      "fatal": false
+    }
+  ]
+}

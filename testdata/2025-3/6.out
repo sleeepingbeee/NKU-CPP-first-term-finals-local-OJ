@@ -1,0 +1,6 @@
+Allocated at index 0
+Allocated at index 2
+Allocated at index 4
+Freed 2 blocks from index 2
+Allocated at index 2
+Allocated at index 6

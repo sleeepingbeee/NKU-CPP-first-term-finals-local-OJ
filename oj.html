@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>本地 OJ · 期末上机真题</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#fff; --line:#e3e6ea; --text:#1f2328; --muted:#6b7280;
+    --accent:#2f6fed; --accent-soft:#eaf1fe;
+    --ac:#16a34a; --wa:#dc2626; --tle:#d97706; --re:#9333ea; --ce:#64748b;
+    --mono:"Cascadia Mono","JetBrains Mono",Consolas,"Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:14px/1.6 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+  header{height:52px;display:flex;align-items:center;gap:14px;padding:0 16px;
+         background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  header .logo{font-weight:700;font-size:15px;letter-spacing:.5px}
+  header .logo span{color:var(--accent)}
+  .pill{font-size:12px;padding:3px 9px;border-radius:999px;background:#eef1f4;color:var(--muted)}
+  .pill.ok{background:#e8f7ee;color:#0f7a37}
+  .pill.bad{background:#fdecec;color:#b42318}
+  .grow{flex:1}
+  .progress{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .bar{width:120px;height:7px;border-radius:99px;background:#e6e9ed;overflow:hidden}
+  .bar>i{display:block;height:100%;width:0;background:var(--ac);transition:width .4s}
+  button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--line);
+         background:#fff;color:var(--text);padding:6px 12px;transition:.15s}
+  button:hover{border-color:#c9cfd6;background:#fafbfc}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  button.primary:hover{background:#255fd6}
+  button.ghost{border:0;background:transparent;color:var(--muted);padding:6px 8px}
+  button.ghost:hover{color:var(--accent);background:var(--accent-soft)}
+  button:disabled{opacity:.55;cursor:not-allowed}
+
+  .layout{display:flex;height:calc(100vh - 52px);overflow:hidden}
+  aside{width:262px;flex:0 0 262px;background:#fff;border-right:1px solid var(--line);
+        display:flex;flex-direction:column;overflow:hidden}
+  .search{padding:10px;border-bottom:1px solid var(--line)}
+  .search input{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;
+                font:inherit;outline:none}
+  .search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .plist{overflow:auto;padding:6px 8px 20px;flex:1}
+  .pgroup{font-size:12px;color:var(--muted);margin:10px 6px 4px;font-weight:600}
+  .pitem{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:7px;
+         cursor:pointer;line-height:1.35}
+  .pitem:hover{background:#f4f6f8}
+  .pitem.active{background:var(--accent-soft)}
+  .pitem.active .pt{color:var(--accent);font-weight:600}
+  .pitem .pt{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tick{width:15px;color:var(--ac);font-weight:700;text-align:center;font-size:12px}
+  .diff{font-size:11px;padding:1px 6px;border-radius:4px;white-space:nowrap;font-weight:600}
+  .d1{background:#eef1f4;color:#6b7280}
+  .d2{background:#e6f0ff;color:#1f6feb}
+  .d3{background:#fff4d6;color:#9a6700}
+  .d4{background:#ffe8db;color:#bc4c00}
+  .d5{background:#fde2e2;color:#b42318}
+
+  main{flex:1;display:flex;overflow:hidden}
+  .pane{overflow:auto;padding:22px 26px}
+  #statementPane{flex:1 1 52%;border-right:1px solid var(--line);background:#fff}
+  #workPane{flex:1 1 48%;display:flex;flex-direction:column;min-width:380px;overflow:hidden}
+
+  .ptitle{font-size:20px;font-weight:700;margin:0 0 8px}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px;
+        font-size:12px;color:var(--muted)}
+  .tag{background:#f1f3f5;border-radius:5px;padding:2px 7px;color:#495057}
+  .md{font-size:14px;line-height:1.75}
+  .md h1,.md h2,.md h3{font-size:15px;margin:20px 0 8px;padding-bottom:5px;
+                       border-bottom:1px solid var(--line)}
+  .md h3:first-child{margin-top:0}
+  .md p{margin:8px 0}
+  .md ul,.md ol{margin:8px 0;padding-left:22px}
+  .md li{margin:3px 0}
+  .md code{background:#f1f3f5;padding:1px 5px;border-radius:4px;
+           font-family:var(--mono);font-size:12.5px;color:#b42318}
+  .md pre{background:#f8f9fb;border:1px solid var(--line);border-radius:8px;
+          padding:11px 13px;overflow:auto;margin:10px 0}
+  .md pre code{background:none;padding:0;color:#24292f;font-size:12.5px;line-height:1.55}
+  .md table{border-collapse:collapse;margin:10px 0;font-size:13px}
+  .md th,.md td{border:1px solid var(--line);padding:5px 10px;text-align:left}
+  .md th{background:#f8f9fb}
+  .md blockquote{margin:8px 0;padding:6px 12px;border-left:3px solid var(--accent);
+                 background:#f8faff;color:#495057}
+
+  .tabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid var(--line);
+        background:#fbfcfd}
+  .tab{padding:7px 14px;border-radius:8px 8px 0 0;cursor:pointer;font-size:13px;
+       color:var(--muted);border:1px solid transparent;border-bottom:0}
+  .tab.active{background:#fff;color:var(--accent);font-weight:600;
+               border-color:var(--line);position:relative;top:1px}
+  .toolbar{display:flex;align-items:center;gap:8px;padding:8px 12px;
+           border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
+  .toolbar .hint{font-size:12px;color:var(--muted);margin-left:auto}
+
+  .editorwrap{flex:1;display:flex;overflow:hidden;background:#fff}
+  .gutter{width:46px;flex:0 0 46px;margin:0;padding:10px 6px 10px 0;text-align:right;
+          background:#fbfcfd;border-right:1px solid var(--line);color:#b0b7c0;
+          font:13px/1.55 var(--mono);overflow:hidden;user-select:none}
+  #code{flex:1;border:0;outline:none;resize:none;padding:10px 12px;
+        font:13px/1.55 var(--mono);background:#fff;color:#1f2328;tab-size:4;
+        white-space:pre;overflow:auto}
+  .selftest{border-top:1px solid var(--line);background:#fbfcfd}
+  .selftest summary{cursor:pointer;padding:8px 12px;font-size:12.5px;color:var(--muted);
+                    user-select:none}
+  .selftest .body{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px}
+  .selftest textarea{width:100%;min-height:64px;resize:vertical;padding:8px;
+      border:1px solid var(--line);border-radius:7px;font:12.5px/1.5 var(--mono);outline:none}
+  .selftest pre{margin:0;background:#fff;border:1px solid var(--line);border-radius:7px;
+                padding:8px;max-height:200px;overflow:auto;font:12.5px/1.5 var(--mono);
+                white-space:pre-wrap;word-break:break-all}
+
+  #resultPane{overflow:auto;padding:16px 18px;display:none}
+  .banner{border-radius:10px;padding:13px 16px;margin-bottom:14px;color:#fff;font-weight:600;
+          display:flex;align-items:center;gap:10px}
+  .banner small{font-weight:400;opacity:.9;font-size:12px}
+  .v-AC{background:linear-gradient(135deg,#16a34a,#0f7a37)}
+  .v-WA{background:linear-gradient(135deg,#dc2626,#b42318)}
+  .v-TLE{background:linear-gradient(135deg,#d97706,#b45309)}
+  .v-RE{background:linear-gradient(135deg,#9333ea,#7e22ce)}
+  .v-CE{background:linear-gradient(135deg,#64748b,#475569)}
+  .v-NO_DATA{background:#94a3b8}
+  .warn{border:1px solid #f6c9c9;background:#fdf2f2;color:#b42318;border-radius:9px;
+        padding:9px 13px;margin-bottom:12px;font-size:13px}
+  .warn b{font-weight:700}
+  h4.sec{font-size:13px;color:var(--muted);margin:16px 0 7px;font-weight:600}
+  .cases{display:flex;flex-wrap:wrap;gap:7px}
+  .case{min-width:66px;border-radius:7px;padding:5px 8px;font-size:12px;
+        border:1px solid var(--line);background:#fff;text-align:center}
+  .case b{display:block;font-size:12px}
+  .case.ok{border-color:#bfe6cd;background:#f2fbf5;color:#0f7a37}
+  .case.bad{border-color:#f3c2c2;background:#fdf4f4;color:#b42318}
+  .case .t{color:var(--muted);font-size:11px}
+  .kv{display:grid;grid-template-columns:88px 1fr;gap:6px 10px;font-size:13px;
+      background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  .kv .k{color:var(--muted)}
+  .kv pre{margin:0;background:#f8f9fb;border-radius:6px;padding:7px 9px;max-height:190px;
+          overflow:auto;font:12.5px/1.5 var(--mono);white-space:pre-wrap;word-break:break-all}
+  .clog{background:#1f2328;color:#e6edf3;border-radius:9px;padding:12px 14px;
+        font:12.5px/1.55 var(--mono);white-space:pre-wrap;overflow:auto;max-height:340px}
+  .chk{display:flex;gap:8px;align-items:flex-start;padding:7px 11px;border-radius:8px;
+       background:#fff;border:1px solid var(--line);margin-bottom:6px;font-size:13px}
+  .chk .ico{flex:0 0 16px;font-weight:700}
+  .chk.ok .ico{color:var(--ac)}
+  .chk.bad .ico{color:var(--wa)}
+  .chk.bad{border-color:#f3c2c2;background:#fdf4f4}
+  .chk .hn{color:var(--muted);font-size:12px;margin-top:2px}
+  .fatal{font-size:11px;background:#fde2e2;color:#b42318;border-radius:4px;padding:1px 5px;
+         margin-left:6px;font-weight:600}
+
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;
+         align-items:center;justify-content:center;z-index:50;padding:24px}
+  .modal.show{display:flex}
+  .modal .box{background:#fff;border-radius:12px;max-width:900px;width:100%;
+              max-height:86vh;display:flex;flex-direction:column;overflow:hidden}
+  .modal .hd{display:flex;align-items:center;gap:10px;padding:13px 16px;
+             border-bottom:1px solid var(--line);font-weight:600}
+  .modal .bd{overflow:auto;padding:0}
+  .modal pre{margin:0;padding:14px 16px;font:12.5px/1.55 var(--mono);white-space:pre;
+             overflow:auto;background:#fbfcfd}
+  .empty{color:var(--muted);text-align:center;padding:40px 10px;font-size:13px}
+  @media (max-width:1080px){
+    .layout{flex-direction:column;height:auto}
+    aside{width:100%;flex:none;max-height:210px}
+    main{flex-direction:column;height:auto}
+    #statementPane{border-right:0;border-bottom:1px solid var(--line)}
+    #workPane{min-height:70vh}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">本地 <span>OJ</span> · 期末上机真题</div>
+  <div class="pill" id="envPill">检测编译器中…</div>
+  <div class="grow"></div>
+  <div class="progress">
+    <span id="progText">0 / 0</span>
+    <div class="bar"><i id="progBar"></i></div>
+  </div>
+  <button class="ghost" id="btnReset" title="清空本地保存的代码与通过状态">重置进度</button>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="search"><input id="search" placeholder="搜索题号 / 标题 / 考点"></div>
+    <div class="plist" id="plist"></div>
+  </aside>
+
+  <main>
+    <section class="pane" id="statementPane">
+      <div id="statementBox"><div class="empty">← 从左边选一道题开始</div></div>
+    </section>
+
+    <section id="workPane">
+      <div class="tabs">
+        <div class="tab active" data-tab="code">我的代码</div>
+        <div class="tab" data-tab="result">评测结果</div>
+      </div>
+
+      <div id="codeView" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+        <div class="toolbar">
+          <button class="primary" id="btnSubmit">提交评测</button>
+          <button id="btnTest">自测运行</button>
+          <button id="btnSolution">看参考解</button>
+          <button class="ghost" id="btnClear">清空</button>
+          <span class="hint" id="saveHint">Ctrl+Enter 提交</span>
+        </div>
+        <div class="editorwrap">
+          <pre class="gutter" id="gutter">1</pre>
+          <textarea id="code" spellcheck="false" placeholder="// 在这里写你的 C++ 代码"></textarea>
+        </div>
+        <details class="selftest" id="selfTestBox">
+          <summary>自测：自定义输入跑一遍（不判分）</summary>
+          <div class="body">
+            <textarea id="testInput" spellcheck="false" placeholder="输入数据（可空）"></textarea>
+            <div><button id="btnRunTest">运行</button>
+                 <span class="hint" id="runHint"></span></div>
+            <pre id="testOutput" style="display:none"></pre>
+          </div>
+        </details>
+      </div>
+
+      <div id="resultPane"></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <div class="hd"><span id="modalTitle">参考解</span><div class="grow"></div>
+      <button class="ghost" id="modalClose">关闭</button></div>
+    <div class="bd"><pre id="modalBody"></pre></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const LS = {
+  code: (id) => "oj.code." + id,
+  solved: () => "oj.solved",
+  input: (id) => "oj.input." + id,
+};
+let PROBLEMS = [];
+let CUR = null;
+let SOLVED = {};
+let TC = null;
+
+/* ---------------- 极简 Markdown ---------------- */
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function inline(s){
+  let t = esc(s);
+  t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+  t = t.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  return t;
+}
+function mdToHtml(src){
+  const lines = String(src || "").replace(/\r\n?/g,"\n").split("\n");
+  let out = [], i = 0;
+  while (i < lines.length){
+    const ln = lines[i];
+    if (/^```/.test(ln)){
+      const buf = []; i++;
+      while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+      i++;
+      out.push('<pre><code>' + esc(buf.join("\n")) + '</code></pre>');
+      continue;
+    }
+    let m = /^(#{1,4})\s+(.*)$/.exec(ln);
+    if (m){ out.push('<h' + m[1].length + '>' + inline(m[2]) + '</h' + m[1].length + '>'); i++; continue; }
+    if (/^(-{3,}|\*{3,})$/.test(ln.trim())){ out.push('<hr>'); i++; continue; }
+    if (/^\|/.test(ln) && i+1 < lines.length && /^\|[\s:|-]+\|?\s*$/.test(lines[i+1])){
+      const head = ln.split("|").slice(1,-1).map(x=>x.trim());
+      i += 2;
+      const rows = [];
+      while (i < lines.length && /^\|/.test(lines[i])){
+        rows.push(lines[i].split("|").slice(1,-1).map(x=>x.trim())); i++;
+      }
+      let h = '<table><thead><tr>' + head.map(x=>'<th>'+inline(x)+'</th>').join('') + '</tr></thead><tbody>';
+      rows.forEach(r => { h += '<tr>' + r.map(x=>'<td>'+inline(x)+'</td>').join('') + '</tr>'; });
+      out.push(h + '</tbody></table>');
+      continue;
+    }
+    if (/^>\s?/.test(ln)){
+      const buf = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/,""));
+      out.push('<blockquote>' + inline(buf.join(" ")) + '</blockquote>');
+      continue;
+    }
+    if (/^\s*[-*+]\s+/.test(ln)){
+      const buf = [];
+      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i]))
+        buf.push('<li>' + inline(lines[i++].replace(/^\s*[-*+]\s+/,"")) + '</li>');
+      out.push('<ul>' + buf.join("") + '</ul>');
+      continue;
+    }
+    if (/^\s*\d+[.)]\s+/.test(ln)){
+      const buf = [];
+      while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i]))
+        buf.push('<li>' + inline(lines[i++].replace(/^\s*\d+[.)]\s+/,"")) + '</li>');
+      out.push('<ol>' + buf.join("") + '</ol>');
+      continue;
+    }
+    if (ln.trim() === ""){ i++; continue; }
+    const buf = [ln]; i++;
+    while (i < lines.length && lines[i].trim() !== "" &&
+           !/^(#{1,4}\s|```|>\s?|\s*[-*+]\s+|\s*\d+[.)]\s+|\|)/.test(lines[i])) buf.push(lines[i++]);
+    out.push('<p>' + inline(buf.join("\n")).replace(/\n/g," ") + '</p>');
+  }
+  return out.join("\n");
+}
+
+/* ---------------- 难度 ---------------- */
+const DIFF = { "入门":1,"普及-":2,"普及":3,"普及+":4,"提高":5,"提高+":5,"省选":5 };
+function diffClass(d){ return "d" + (DIFF[d] || 1); }
+
+/* ---------------- 列表 ---------------- */
+function loadSolved(){
+  try { SOLVED = JSON.parse(localStorage.getItem(LS.solved()) || "{}") || {}; } catch(e){ SOLVED = {}; }
+}
+function saveSolved(){ localStorage.setItem(LS.solved(), JSON.stringify(SOLVED)); }
+function updateProgress(){
+  const total = PROBLEMS.length;
+  const done = PROBLEMS.filter(p => SOLVED[p.id]).length;
+  $("#progText").textContent = done + " / " + total;
+  $("#progBar").style.width = total ? (done * 100 / total) + "%" : "0";
+}
+function renderList(){
+  const q = ($("#search").value || "").trim().toLowerCase();
+  const box = $("#plist");
+  box.innerHTML = "";
+  const years = {};
+  PROBLEMS.forEach(p => {
+    const hay = (p.id + " " + (p.title||"") + " " + (p.tags||[]).join(" ") + " " + (p.no||"")).toLowerCase();
+    if (q && hay.indexOf(q) < 0) return;
+    const y = String(p.year || (p.id||"").split("-")[0]);
+    (years[y] = years[y] || []).push(p);
+  });
+  const keys = Object.keys(years).sort();
+  if (!keys.length){ box.innerHTML = '<div class="empty">没有匹配的题目</div>'; return; }
+  keys.forEach(y => {
+    const h = document.createElement("div");
+    h.className = "pgroup";
+    h.textContent = y + " 年";
+    box.appendChild(h);
+    years[y].forEach(p => {
+      const d = document.createElement("div");
+      d.className = "pitem" + (CUR && CUR.id === p.id ? " active" : "");
+      d.onclick = () => openProblem(p.id);
+      d.innerHTML =
+        '<span class="tick">' + (SOLVED[p.id] ? "✓" : "") + '</span>' +
+        '<span class="pt">' + esc(p.title || p.id) + '</span>' +
+        '<span class="diff ' + diffClass(p.difficulty) + '">' + esc(p.difficulty || "?") + '</span>';
+      box.appendChild(d);
+    });
+  });
+}
+
+/* ---------------- 打开题目 ---------------- */
+async function openProblem(id){
+  const meta = PROBLEMS.find(p => p.id === id);
+  if (!meta) return;
+  const res = await fetch("/api/problem/" + encodeURIComponent(id));
+  const p = await res.json();
+  CUR = p;
+  renderList();
+  $("#statementBox").innerHTML =
+    '<h2 class="ptitle">' + esc(p.title || p.id) + '</h2>' +
+    '<div class="meta">' +
+      '<span class="tag">' + esc(p.id) + '</span>' +
+      (p.no ? '<span class="tag">' + esc(p.no) + '</span>' : '') +
+      '<span class="diff ' + diffClass(p.difficulty) + '">' + esc(p.difficulty || "?") + '</span>' +
+      (p.tags || []).map(t => '<span class="tag">' + esc(t) + '</span>').join("") +
+      '<span class="tag">时限 ' + ((p.timeLimitMs||2000)/1000) + 's</span>' +
+      '<span class="tag">' + (p.testCount || 0) + ' 组测试</span>' +
+      (SOLVED[p.id] ? '<span class="pill ok">已通过</span>' : '') +
+    '</div>' +
+    '<div class="md">' + mdToHtml(p.statement) + '</div>' +
+    '<div class="md"><h3>题目来源</h3><p>' + esc(p.source || "") + '</p></div>';
+  $("#statementPane").scrollTop = 0;
+
+  const saved = localStorage.getItem(LS.code(id));
+  $("#code").value = saved != null ? saved : "";
+  $("#testInput").value = localStorage.getItem(LS.input(id)) || "";
+  $("#testOutput").style.display = "none";
+  $("#resultPane").innerHTML = '<div class="empty">提交后会在这里显示每个测试点的结果</div>';
+  switchTab("code");
+  updateGutter();
+  localStorage.setItem("oj.last", id);
+}
+
+/* ---------------- 编辑器 ---------------- */
+function updateGutter(){
+  const n = $("#code").value.split("\n").length;
+  const arr = [];
+  for (let i = 1; i <= Math.max(n, 1); i++) arr.push(i);
+  $("#gutter").textContent = arr.join("\n");
+  $("#gutter").scrollTop = $("#code").scrollTop;
+}
+$("#code").addEventListener("input", () => {
+  updateGutter();
+  if (CUR) localStorage.setItem(LS.code(CUR.id), $("#code").value);
+  $("#saveHint").textContent = "已保存到浏览器";
+});
+$("#code").addEventListener("scroll", () => { $("#gutter").scrollTop = $("#code").scrollTop; });
+$("#code").addEventListener("keydown", (e) => {
+  if (e.key === "Tab"){
+    e.preventDefault();
+    const el = e.target, s = el.selectionStart, t = el.selectionEnd;
+    el.value = el.value.slice(0, s) + "    " + el.value.slice(t);
+    el.selectionStart = el.selectionEnd = s + 4;
+    updateGutter();
+  }
+});
+$("#testInput").addEventListener("input", () => {
+  if (CUR) localStorage.setItem(LS.input(CUR.id), $("#testInput").value);
+});
+
+/* ---------------- 标签页 ---------------- */
+function switchTab(name){
+  document.querySelectorAll(".tab").forEach(t =>
+    t.classList.toggle("active", t.dataset.tab === name));
+  $("#codeView").style.display = name === "code" ? "flex" : "none";
+  $("#resultPane").style.display = name === "result" ? "block" : "none";
+}
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => switchTab(t.dataset.tab));
+
+/* ---------------- 提交 ---------------- */
+function verdictHtml(r){
+  const cls = "v-" + (r.verdict || "CE");
+  let h = '<div class="banner ' + cls + '">' +
+    '<span style="font-size:17px">' + esc(r.verdictLabel || r.verdict) + '</span>' +
+    '<span>' + (r.passed||0) + ' / ' + (r.total||0) + ' 组通过</span>' +
+    '<div class="grow"></div>' +
+    '<small>用时 ' + ((r.elapsedMs||0)/1000).toFixed(1) + ' s</small></div>';
+
+  if (r.fatalFailed && r.fatalFailed.length){
+    h += '<div class="warn"><b>⚠ 硬性实现要求未通过：</b>' + esc(r.fatalFailed.join("、")) +
+         '<br>按本校真题的规则，考场会直接记 <b>0 分</b>，即使测试点全过。</div>';
+  }
+  if (r.verdict === "CE"){
+    h += '<h4 class="sec">编译信息</h4><div class="clog">' + esc(r.compileLog || "（无输出）") + '</div>';
+  }
+  if (r.verdict === "NO_DATA"){
+    h += '<div class="empty">这道题还没有测试数据，先跳过吧。</div>';
+  }
+  if (r.cases && r.cases.length){
+    h += '<h4 class="sec">测试点</h4><div class="cases">';
+    r.cases.forEach(c => {
+      const ok = c.status === "AC";
+      h += '<div class="case ' + (ok ? "ok" : "bad") + '"><b>' + (ok ? "✓ " + c.no : "✗ " + c.no) +
+           '</b><span class="t">' + c.status + '</span></div>';
+    });
+    h += '</div>';
+  }
+  if (r.firstFail){
+    const f = r.firstFail;
+    h += '<h4 class="sec">第一个没过的测试点 #' + esc(String(f.no)) + '</h4>';
+    if (f.detail) h += '<div class="warn">' + esc(f.detail) + '</div>';
+    h += '<div class="kv">' +
+      '<div class="k">输入</div><pre>' + esc(f.input) + '</pre>' +
+      '<div class="k">期望输出</div><pre>' + esc(f.expected) + '</pre>' +
+      '<div class="k">你的输出</div><pre>' + esc(f.actual) + '</pre>' +
+      (f.stderr && f.stderr.trim() ? '<div class="k">stderr</div><pre>' + esc(f.stderr) + '</pre>' : '') +
+      '</div>';
+  }
+  if (r.checks && r.checks.length){
+    h += '<h4 class="sec">代码规范检查（本校真题的硬性要求）</h4>';
+    r.checks.forEach(c => {
+      h += '<div class="chk ' + (c.ok ? "ok" : "bad") + '">' +
+        '<span class="ico">' + (c.ok ? "✓" : "✗") + '</span><div>' +
+        '<div>' + esc(c.name) + (c.fatal ? '<span class="fatal">硬性要求</span>' : '') + '</div>' +
+        (!c.ok && c.hint ? '<div class="hn">' + esc(c.hint) + '</div>' : '') +
+        '</div></div>';
+    });
+  }
+  return h;
+}
+
+async function submit(){
+  if (!CUR) return;
+  const code = $("#code").value;
+  if (code.trim().length < 10){ alert("代码太短了，先写点东西吧"); return; }
+  const btn = $("#btnSubmit");
+  btn.disabled = true; btn.textContent = "评测中…";
+  switchTab("result");
+  $("#resultPane").innerHTML = '<div class="empty">正在编译并运行测试点，请稍候（首次编译约 2~4 秒）…</div>';
+  try {
+    const res = await fetch("/api/submit", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ id: CUR.id, code })
+    });
+    const r = await res.json();
+    if (r.error){ $("#resultPane").innerHTML = '<div class="warn">' + esc(r.error) + '</div>'; return; }
+    $("#resultPane").innerHTML = verdictHtml(r);
+    if (r.ok){
+      const first = !SOLVED[CUR.id];
+      SOLVED[CUR.id] = true; saveSolved(); updateProgress(); renderList();
+      if (first){
+        const meta = document.querySelector("#statementBox .meta");
+        if (meta && !meta.querySelector(".pill.ok")){
+          const sp = document.createElement("span");
+          sp.className = "pill ok"; sp.textContent = "已通过";
+          meta.appendChild(sp);
+        }
+      }
+    }
+  } catch(e){
+    $("#resultPane").innerHTML = '<div class="warn">请求失败：' + esc(String(e)) +
+      '<br>检查后端黑窗口是否还开着。</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = "提交评测";
+  }
+}
+
+$("#btnSubmit").onclick = submit;
+$("#btnClear").onclick = () => {
+  if (!CUR) return;
+  if (!confirm("清空这道题已保存的代码？")) return;
+  $("#code").value = "";
+  localStorage.removeItem(LS.code(CUR.id));
+  updateGutter();
+};
+$("#btnTest").onclick = () => {
+  $("#selfTestBox").open = true;
+  $("#testInput").focus();
+  $("#selfTestBox").scrollIntoView({block:"nearest"});
+};
+$("#btnRunTest").onclick = async () => {
+  if (!CUR) return;
+  const out = $("#testOutput");
+  $("#runHint").textContent = "运行中…";
+  out.style.display = "block";
+  out.textContent = "";
+  try {
+    const res = await fetch("/api/run", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ id: CUR.id, code: $("#code").value, input: $("#testInput").value })
+    });
+    const r = await res.json();
+    if (r.error){ out.textContent = "错误：" + r.error; return; }
+    if (r.ce){ out.textContent = "编译错误：\n" + (r.compileLog || ""); return; }
+    let t = r.output || "";
+    if (r.timeout) t += "\n[运行超过 5 秒，已强制结束]";
+    else if (r.rc) t += "\n[退出码 " + r.rc + "]";
+    if (r.stderr && r.stderr.trim()) t += "\n[stderr]\n" + r.stderr;
+    out.textContent = t || "（没有输出）";
+    $("#runHint").textContent = "用时 " + r.timeMs + " ms";
+  } catch(e){
+    out.textContent = "请求失败：" + String(e);
+  }
+};
+
+/* ---------------- 参考解 ---------------- */
+$("#btnSolution").onclick = async () => {
+  if (!CUR) return;
+  if (!confirm("看参考解会削弱练习效果，确定要看吗？")) return;
+  try {
+    const res = await fetch("/api/solution/" + encodeURIComponent(CUR.id));
+    const r = await res.json();
+    if (r.error){ alert(r.error); return; }
+    $("#modalTitle").textContent = "参考解 · " + (CUR.title || CUR.id);
+    $("#modalBody").textContent = r.code;
+    $("#modal").classList.add("show");
+  } catch(e){ alert("请求失败：" + e); }
+};
+$("#modalClose").onclick = () => $("#modal").classList.remove("show");
+$("#modal").onclick = (e) => { if (e.target.id === "modal") $("#modal").classList.remove("show"); };
+
+/* ---------------- 重置 & 快捷键 ---------------- */
+$("#btnReset").onclick = () => {
+  if (!confirm("清空所有题目的代码与通过状态？")) return;
+  Object.keys(localStorage).filter(k => k.indexOf("oj.") === 0).forEach(k => localStorage.removeItem(k));
+  SOLVED = {}; saveSolved(); updateProgress(); renderList();
+};
+$("#search").addEventListener("input", renderList);
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter"){ e.preventDefault(); submit(); }
+});
+
+/* ---------------- 启动 ---------------- */
+(async function init(){
+  try {
+    const res = await fetch("/api/problems");
+    const data = await res.json();
+    PROBLEMS = data.problems || [];
+    const tc = data.toolchain || {};
+    const pill = $("#envPill");
+    if (tc.ok){
+      pill.className = "pill ok";
+      pill.textContent = "编译器就绪 · " + (tc.kind === "gcc" ? "g++" : "MSVC");
+    } else {
+      pill.className = "pill bad";
+      pill.textContent = "未找到编译器";
+      pill.title = tc.detail || "";
+    }
+    loadSolved();
+    // 去掉坏题的报错项
+    PROBLEMS.filter(p => p.error).forEach(p => { p.title = p.id + "（数据损坏）"; });
+    updateProgress();
+    renderList();
+    if (PROBLEMS.length && !CUR){
+      const last = localStorage.getItem("oj.last");
+      const pick = PROBLEMS.find(p => p.id === last) || PROBLEMS[0];
+      openProblem(pick.id);
+    }
+  } catch(e){
+    $("#envPill").className = "pill bad";
+    $("#envPill").textContent = "后端没连上";
+    $("#plist").innerHTML = '<div class="empty">连不上后端。<br>确认 server.py 还在运行。</div>';
+  }
+})();
+</script>
+</body>
+</html>

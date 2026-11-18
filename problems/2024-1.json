@@ -1,0 +1,38 @@
+{
+  "id": "2024-1",
+  "year": 2024,
+  "no": "第1题（A卷）",
+  "title": "进制转换",
+  "difficulty": "普及-",
+  "tags": [
+    "函数重载",
+    "进制转换",
+    "字符串"
+  ],
+  "source": "2024 2-1 上机考试真题 · 第1题 A卷 · OJ #843",
+  "timeLimitMs": 2000,
+  "checker": "default",
+  "statement": "### 题目描述\n\n请使用**重载函数** `radixConvert()` 完成进制转换，要求如下：\n\n```cpp\nint radixConvert(char binaryString[], int len);   // 将二进制字符串转换成十进制数\nvoid radixConvert(int n);                         // 将整数 n 转换成二进制字符串\n```\n\n输入一个二进制字符串（最长不超过 16 位）时，用**按权展开法**把它转成十进制整数；输入一个非负十进制整数（最大不超过 65535）时，用**取余法**把它转成二进制并输出。\n\n题目硬性要求：**必须使用按权展开法和取余法实现进制转换，否则 0 分**；并且必须真正写出上面两个**同名重载函数**。\n\n### 输入格式\n\n第一行为一个整数 `M`（`0 < M < 6`），表示接下来有 `M` 行数据。\n\n接下来每一行的格式为「字符 `c` 和数据 `data`」，用空格隔开：\n\n- `c` 为 `B` 或 `b` 时，`data` 是一个二进制字符串；\n- `c` 为 `D` 或 `d` 时，`data` 是一个十进制非负整数；\n- `c` 为其他字符时，表示输入错误，此时输出 `Wrong input` 并**立即退出程序**（后续行不再处理）。\n\n### 输出格式\n\n输出 `M` 行，每行一个数，为对应每一行输入的进制转换结果。\n\n若遇到非法字符 `c`，则输出一行 `Wrong input` 后立即结束程序。\n\n### 数据范围\n\n- `0 < M < 6`\n- 二进制字符串长度不超过 16 位\n- 十进制整数非负且不超过 65535\n- 时间/空间限制原题未标注\n\n### 输入样例\n\n```\n3\nD 5\nB 1011\nd 65535\n```\n\n### 输出样例\n\n```\n101\n11\n1111111111111111\n```\n\n### 提示\n\n- 输出错误提示必须**一字不差**地写成 `Wrong input`（首字母大写、中间一个空格、没有句号），不要写成 `Wrong Input`。\n- 65535 的二进制是 16 个 1，用来存二进制串的字符数组至少开 17 位。\n- `n = 0` 时十进制转二进制应输出 `0`。\n- 本题按 **A 卷**（二/十进制）实现。B 卷把二进制换成八进制：二进制串参数改为 `char octString[]`，输入字符 `c` 为 `O`/`o` 表示八进制串（最长 6 位），其余规则相同，样例为 `3 / D 5 / O 377 / d 65535` → `5 / 255 / 177777`。\n",
+  "samples": [
+    {
+      "input": "3\nD 5\nB 1011\nd 65535\n",
+      "output": "101\n11\n1111111111111111\n"
+    }
+  ],
+  "checks": [
+    {
+      "name": "必须实现两个同名重载函数 radixConvert",
+      "kind": "require",
+      "pattern": "(?s)(?=.*int\\s+radixConvert\\s*\\(\\s*char)(?=.*void\\s+radixConvert\\s*\\(\\s*int)",
+      "hint": "题目硬性要求：必须写出 int radixConvert(char[], int) 与 void radixConvert(int) 两个同名重载函数，否则计 0 分。",
+      "fatal": true
+    },
+    {
+      "name": "禁止用 itoa / strtol / stoi / stringstream / bitset 一把梭",
+      "kind": "forbid",
+      "pattern": "\\b(itoa|strtol|stoi|stringstream|bitset)\\b",
+      "hint": "必须手写按权展开法与除基取余法实现进制转换，否则 0 分。",
+      "fatal": true
+    }
+  ]
+}
